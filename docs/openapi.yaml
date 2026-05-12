@@ -1,0 +1,207 @@
+openapi: 3.1.0
+info:
+  title: HIMS OPD API
+  version: 1.0.0
+  description: |
+    REST API for the HIMS Hospital OPD Management System. All endpoints (except
+    `/api/auth/login` and `/api/health`) require an authenticated session
+    cookie issued by `/api/auth/login`.
+
+servers:
+  - url: http://localhost:3000
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: hims_session
+  schemas:
+    Error:
+      type: object
+      properties:
+        ok: { type: boolean, example: false }
+        error: { type: string }
+    Ok:
+      type: object
+      properties:
+        ok: { type: boolean, example: true }
+        data: { type: object }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+    Patient:
+      type: object
+      properties:
+        id: { type: string }
+        mrn: { type: string }
+        fullName: { type: string }
+        gender: { type: string, enum: [MALE, FEMALE, OTHER] }
+        dob: { type: string, format: date }
+        phone: { type: string }
+    Appointment:
+      type: object
+      properties:
+        id: { type: string }
+        visitNo: { type: string }
+        tokenNo: { type: integer }
+        patientId: { type: string }
+        doctorId: { type: string }
+        scheduledAt: { type: string, format: date-time }
+        status: { type: string }
+        priority: { type: string }
+    PrescriptionItem:
+      type: object
+      properties:
+        drugName: { type: string }
+        dose: { type: string }
+        frequency: { type: string }
+        durationDays: { type: integer }
+        quantity: { type: integer }
+        instructions: { type: string }
+
+security:
+  - sessionCookie: []
+
+paths:
+  /api/health:
+    get:
+      summary: Liveness probe
+      security: []
+      responses: { '200': { description: ok } }
+
+  /api/auth/login:
+    post:
+      summary: Sign in
+      security: []
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/LoginRequest' } } }
+      responses:
+        '200': { description: Session cookie set }
+        '401': { description: Invalid credentials }
+
+  /api/auth/logout:
+    post:
+      summary: Clear session cookie
+      responses: { '200': { description: ok } }
+
+  /api/auth/me:
+    get:
+      summary: Current user
+      responses: { '200': { description: ok } }
+
+  /api/dashboard:
+    get:
+      summary: KPI bundle for the current role
+      responses: { '200': { description: ok } }
+
+  /api/patients:
+    get:
+      summary: Search/list patients
+      parameters:
+        - { in: query, name: q, schema: { type: string } }
+        - { in: query, name: take, schema: { type: integer } }
+      responses: { '200': { description: ok } }
+    post:
+      summary: Register a new patient (auto-MRN)
+      responses: { '201': { description: created } }
+
+  /api/patients/{id}:
+    get:
+      summary: Full patient record
+      parameters: [{ in: path, name: id, required: true, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+    patch:
+      summary: Update patient
+      parameters: [{ in: path, name: id, required: true, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+
+  /api/appointments:
+    get:
+      summary: List appointments
+      parameters:
+        - { in: query, name: status, schema: { type: string } }
+        - { in: query, name: doctorId, schema: { type: string } }
+        - { in: query, name: patientId, schema: { type: string } }
+        - { in: query, name: from, schema: { type: string, format: date-time } }
+        - { in: query, name: to, schema: { type: string, format: date-time } }
+      responses: { '200': { description: ok } }
+    post:
+      summary: Book an appointment
+      responses: { '201': { description: created } }
+
+  /api/appointments/{id}:
+    get:
+      parameters: [{ in: path, name: id, required: true, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+    patch:
+      summary: Update status, time or notes
+      parameters: [{ in: path, name: id, required: true, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+
+  /api/examinations:
+    post:
+      summary: Upsert vitals + structured clinical note (DOCTOR/NURSE)
+      responses: { '200': { description: ok } }
+
+  /api/prescriptions:
+    get: { summary: List prescriptions, responses: { '200': { description: ok } } }
+    post:
+      summary: Upsert e-prescription with allergy alerts (DOCTOR)
+      responses: { '200': { description: ok } }
+
+  /api/prescriptions/{id}/dispense:
+    post:
+      summary: Pharmacist dispensing action
+      parameters: [{ in: path, name: id, required: true, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+
+  /api/lab-tests:
+    get:
+      parameters:
+        - { in: query, name: q, schema: { type: string } }
+        - { in: query, name: kind, schema: { type: string, enum: [LABORATORY, RADIOLOGY] } }
+      responses: { '200': { description: ok } }
+
+  /api/lab-orders:
+    get:
+      parameters:
+        - { in: query, name: status, schema: { type: string } }
+        - { in: query, name: kind, schema: { type: string } }
+      responses: { '200': { description: ok } }
+    post:
+      summary: Place a lab/radiology order (DOCTOR)
+      responses: { '201': { description: created } }
+
+  /api/lab-orders/{id}:
+    patch:
+      summary: Update order status / enter results
+      parameters: [{ in: path, name: id, required: true, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+
+  /api/medications:
+    get:
+      parameters: [{ in: query, name: q, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+
+  /api/invoices:
+    get: { responses: { '200': { description: ok } } }
+    post:
+      summary: Issue invoice (RECEPTIONIST/ADMIN)
+      responses: { '201': { description: created } }
+
+  /api/invoices/{id}/pay:
+    post:
+      summary: Receive payment
+      parameters: [{ in: path, name: id, required: true, schema: { type: string } }]
+      responses: { '200': { description: ok } }
+
+  /api/notifications:
+    get: { responses: { '200': { description: ok } } }
+    post:
+      summary: Mark notification as read (omit id to mark all)
+      responses: { '200': { description: ok } }
