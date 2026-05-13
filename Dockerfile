@@ -25,7 +25,7 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 USER nextjs
-EXPOSE 3000
-ENV PORT=3000 HOSTNAME=0.0.0.0
+EXPOSE 3100
+ENV PORT=3100 HOSTNAME=0.0.0.0
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "server.js"]

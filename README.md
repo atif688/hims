@@ -13,7 +13,7 @@ model.
 | Styling      | Tailwind CSS · custom design system · dark mode     |
 | Backend      | Next.js Route Handlers (REST)                       |
 | ORM          | Prisma 5                                            |
-| Database     | PostgreSQL 16                                       |
+| Database     | SQLite (single file, zero-config)                   |
 | Auth         | JWT (httpOnly cookie) · bcrypt · RBAC               |
 | Charts       | Recharts                                            |
 | Container    | Docker + docker-compose                             |
@@ -69,38 +69,37 @@ All accounts share password `Password123!`.
 | Pharmacist     | pharmacy@hims.local    |
 | Patient        | patient@hims.local     |
 
+## Quick start (local — no database server needed)
+
+The project uses **SQLite**, so a single file gets created automatically. No
+Postgres install, no Docker required.
+
+```bash
+# 1. Install Node 20+ then:
+npm install
+
+# 2. Configure
+cp .env.example .env
+
+# 3. Create tables + seed demo data
+npm run db:push
+npm run db:seed
+
+# 4. Run
+npm run dev
+```
+
+Open <http://localhost:3100> and sign in with any demo account.
+
 ## Quick start (Docker)
 
 ```bash
 cp .env.example .env
-docker compose up -d db
-docker compose run --rm app npx prisma db push
-docker compose run --rm app npx prisma db seed
-docker compose up -d app
+docker compose up -d --build
 ```
 
-App will be available at <http://localhost:3000>.
-
-## Quick start (local dev)
-
-```bash
-# 1. Start Postgres (or use docker compose up -d db)
-# 2. Install
-npm install
-
-# 3. Configure
-cp .env.example .env
-# edit .env to point DATABASE_URL at your Postgres instance
-
-# 4. Migrate + seed
-npm run db:push
-npm run db:seed
-
-# 5. Run
-npm run dev
-```
-
-Open <http://localhost:3000> and sign in with any demo account.
+App will be available at <http://localhost:3100>. The SQLite file persists
+in a named volume.
 
 ## Useful scripts
 

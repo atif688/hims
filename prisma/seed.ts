@@ -1,5 +1,9 @@
-import { PrismaClient, Role, Gender, PatientCategory, AllergySeverity, HistoryType, AppointmentStatus, AppointmentPriority, LabKind, PrescriptionStatus, InvoiceStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import type {
+  Role, Gender, PatientCategory, AllergySeverity, HistoryType,
+  AppointmentStatus, AppointmentPriority, LabKind, PrescriptionStatus, InvoiceStatus,
+} from '../src/lib/types';
 
 const prisma = new PrismaClient();
 
@@ -380,12 +384,12 @@ async function main() {
 
   // -------------------- Notifications --------------------
   const admin = users['admin@hims.local'];
+  await prisma.notification.deleteMany({ where: { userId: admin.id } });
   await prisma.notification.createMany({
     data: [
       { userId: admin.id, kind: 'SYSTEM', title: 'Welcome to HIMS OPD', body: 'Demo data has been seeded. Explore the dashboard.' },
       { userId: admin.id, kind: 'CRITICAL_ALERT', title: 'Low stock alert', body: 'Disprin and Avil are below reorder level.' },
     ],
-    skipDuplicates: true,
   });
 
   console.log('✅ Seed complete.');

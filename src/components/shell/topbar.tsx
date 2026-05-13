@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Bell, LogOut, Moon, Search, Sun, User } from 'lucide-react';
 import { useTheme } from '@/components/theme-provider';
 import { ROLE_LABEL } from '@/lib/utils';
-import type { Role } from '@prisma/client';
+import type { Role } from '@/lib/types';
 
 export function Topbar({ user }: { user: { name: string; role: Role; email: string } }) {
   const { theme, toggle } = useTheme();

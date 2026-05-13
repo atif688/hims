@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Activity } from 'lucide-react';
-import type { Role } from '@prisma/client';
+import type { Role } from '@/lib/types';
 import { navForRole } from '@/lib/nav';
 import { cn } from '@/lib/utils';
 

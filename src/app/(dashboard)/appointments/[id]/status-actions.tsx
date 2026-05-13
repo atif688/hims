@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { AppointmentStatus } from '@prisma/client';
+import type { AppointmentStatus } from '@/lib/types';
 
 const NEXT: Record<AppointmentStatus, { label: string; status: AppointmentStatus; tone: string }[]> = {
   SCHEDULED: [

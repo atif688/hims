@@ -1,35 +1,19 @@
 services:
-  db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: hims
-      POSTGRES_PASSWORD: hims
-      POSTGRES_DB: hims_opd
-    volumes:
-      - hims_pg:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hims -d hims_opd"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
   app:
     build: .
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://hims:hims@db:5432/hims_opd?schema=public
+      DATABASE_URL: file:./prisma/dev.db
       JWT_SECRET: change-me-in-production-please
       JWT_EXPIRES_IN: 12h
       NEXT_PUBLIC_APP_NAME: HIMS OPD
+      NEXT_PUBLIC_APP_URL: http://localhost:3100
       NODE_ENV: production
+      PORT: 3100
     ports:
-      - "3000:3000"
+      - "3100:3100"
+    volumes:
+      - hims_data:/app/prisma
 
 volumes:
-  hims_pg:
+  hims_data:

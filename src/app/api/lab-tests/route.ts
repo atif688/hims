@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
         active: true,
         kind: kind as never,
         ...(q
-          ? { OR: [{ name: { contains: q, mode: 'insensitive' } }, { code: { contains: q, mode: 'insensitive' } }] }
+          ? { OR: [{ name: { contains: q } }, { code: { contains: q } }] }
           : {}),
       },
       orderBy: { name: 'asc' },

@@ -13,4 +13,5 @@ dist/
 build/
 prisma/dev.db
 prisma/dev.db-journal
+prisma/prisma/
 tsconfig.tsbuildinfo

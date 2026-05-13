@@ -43,7 +43,7 @@ export default async function AppointmentDetailPage({ params }: { params: { id: 
               <div className="text-sm font-semibold">Visit status</div>
               <StatusBadge kind="appointment" value={appt.status} />
             </div>
-            <StatusActions id={appt.id} current={appt.status} />
+            <StatusActions id={appt.id} current={appt.status as never} />
 
             <dl className="mt-4 grid sm:grid-cols-2 gap-3 text-sm">
               <Info k="Scheduled" v={formatDate(appt.scheduledAt, true)} />

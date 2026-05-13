@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { requireSession } from '@/lib/auth';
 import { handle, ok, err } from '@/lib/api';
 import { logAudit } from '@/lib/audit';
-import type { AppointmentStatus } from '@prisma/client';
+import type { AppointmentStatus } from '@/lib/types';
 
 const STATUS_FIELDS: Record<AppointmentStatus, Partial<Record<string, Date>>> = {
   SCHEDULED: {},

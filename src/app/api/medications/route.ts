@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
       where: q
         ? {
             OR: [
-              { name: { contains: q, mode: 'insensitive' } },
-              { genericName: { contains: q, mode: 'insensitive' } },
+              { name: { contains: q } },
+              { genericName: { contains: q } },
             ],
           }
         : undefined,

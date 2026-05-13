@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
-import type { Role } from '@prisma/client';
+import type { Role } from '@/lib/types';
 import { prisma } from './prisma';
 
 const SECRET = process.env.JWT_SECRET || 'dev-secret';

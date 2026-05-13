@@ -40,11 +40,11 @@ export async function GET(req: NextRequest) {
     const where = q
       ? {
           OR: [
-            { fullName: { contains: q, mode: 'insensitive' as const } },
-            { mrn: { contains: q, mode: 'insensitive' as const } },
+            { fullName: { contains: q } },
+            { mrn: { contains: q } },
             { phone: { contains: q } },
             { cnic: { contains: q } },
-            { email: { contains: q, mode: 'insensitive' as const } },
+            { email: { contains: q } },
           ],
         }
       : {};

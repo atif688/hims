@@ -18,11 +18,11 @@ export default async function PatientsPage({
       ...(q
         ? {
             OR: [
-              { fullName: { contains: q, mode: 'insensitive' } },
-              { mrn: { contains: q, mode: 'insensitive' } },
+              { fullName: { contains: q } },
+              { mrn: { contains: q } },
               { phone: { contains: q } },
               { cnic: { contains: q } },
-              { email: { contains: q, mode: 'insensitive' } },
+              { email: { contains: q } },
             ],
           }
         : {}),
